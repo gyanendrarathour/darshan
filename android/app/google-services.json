@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1074370133003",
+    "project_id": "darshan-c0182",
+    "storage_bucket": "darshan-c0182.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074370133003:android:0dd1177580785647e9db0e",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl0k6rFK2u5lUg9c8C7C2KzLeF_sfOJK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074370133003:android:8a9a7135f0ab2d15e9db0e",
+        "android_client_info": {
+          "package_name": "com.example.darshan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl0k6rFK2u5lUg9c8C7C2KzLeF_sfOJK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
