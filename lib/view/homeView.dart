@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:darshan/view/adminView.dart';
 import 'package:darshan/view/placesView.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +21,15 @@ class _HomeviewState extends State<Homeview> {
         appBar: AppBar(
           title: const Text("Select State"),
           centerTitle: true,
+          actions: [
+            GestureDetector(
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const AdminVew())),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.person),
+                ))
+          ],
         ),
         body: StreamBuilder(
             stream: _states.snapshots(),
