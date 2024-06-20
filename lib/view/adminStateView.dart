@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +13,53 @@ class AdminStateView extends StatefulWidget {
 class _AdminStateViewState extends State<AdminStateView> {
   final CollectionReference _collectionReference =
       FirebaseFirestore.instance.collection('states');
+
+  TextEditingController stateController = TextEditingController();
+
+  Future<void> _addState() async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: stateController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Enter State Name"),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        String stateName = stateController.text;
+                        bool status = false;
+                        await _collectionReference
+                            .add({'state_name': stateName, 'status': status});
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text(
+                                'State name has been added successfully...')));
+                      },
+                      child: const Text(
+                        'Add',
+                        style: TextStyle(fontSize: 20),
+                      )),
+                )
+              ],
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +96,10 @@ class _AdminStateViewState extends State<AdminStateView> {
                                   icon: const Icon(Icons.edit)),
                               IconButton(
                                   onPressed: () {},
-                                  icon: const Icon(Icons.delete))
+                                  icon: const Icon(Icons.delete)),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.arrow_forward))
                             ],
                           ),
                         ),
@@ -61,7 +113,9 @@ class _AdminStateViewState extends State<AdminStateView> {
             }
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          _addState();
+        },
         backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
