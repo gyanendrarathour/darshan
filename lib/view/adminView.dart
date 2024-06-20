@@ -1,4 +1,4 @@
-import 'package:darshan/view/homeView.dart';
+import 'package:darshan/view/adminStateView.dart';
 import 'package:flutter/material.dart';
 
 class AdminVew extends StatefulWidget {
@@ -43,15 +43,20 @@ class _AdminVewState extends State<AdminVew> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if(emailController.text == "gyanendra@fiitjee.com" && passController.text == "Gyan@1234"){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const Homeview()));
+                  if (emailController.text == "gyanendra@fiitjee.com" &&
+                      passController.text == "Gyan@1234") {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AdminStateView()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Invalid Entry !!!!")));
                   }
-                  else(
-                  );
                 },
                 child: Container(
                     decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                        BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     width: double.infinity,
                     height: 50,
                     child: const Center(
