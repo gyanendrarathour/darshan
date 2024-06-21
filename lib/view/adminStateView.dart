@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:darshan/view/adminPlaceView.dart';
 import 'package:flutter/material.dart';
 
 class AdminStateView extends StatefulWidget {
@@ -177,32 +178,57 @@ class _AdminStateViewState extends State<AdminStateView> {
                         snapshot.data!.docs[index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        elevation: 10,
-                        child: ListTile(
-                          leading: Text(
-                            "${index + 1}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          title: Text(_documentReference['state_name']),
-                          subtitle: const Text('Active'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                  onPressed: () async {
-                                    await _updateState(_documentReference);
-                                  },
-                                  icon: const Icon(Icons.edit)),
-                              IconButton(
-                                  onPressed: () async {
-                                    await _deleteState(_documentReference);
-                                  },
-                                  icon: const Icon(Icons.delete)),
-                              IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.arrow_forward))
-                            ],
+                      child: GestureDetector(
+                        onTap: () {
+                          String stateName = _documentReference['state_name'];
+                          String stateId = _documentReference.id;
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Adminplaceview(
+                                      stateId: stateId, stateName: stateName)));
+                        },
+                        child: Card(
+                          elevation: 10,
+                          child: ListTile(
+                            leading: Text(
+                              "${index + 1}",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            title: Text(
+                              _documentReference['state_name'],
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            subtitle: _documentReference['status']
+                                ? const Text(
+                                    'Active',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green),
+                                  )
+                                : const Text(
+                                    'Inactive',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red),
+                                  ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    onPressed: () async {
+                                      await _updateState(_documentReference);
+                                    },
+                                    icon: const Icon(Icons.edit)),
+                                IconButton(
+                                    onPressed: () async {
+                                      await _deleteState(_documentReference);
+                                    },
+                                    icon: const Icon(Icons.delete))
+                              ],
+                            ),
                           ),
                         ),
                       ),

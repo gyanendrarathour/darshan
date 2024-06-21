@@ -44,12 +44,19 @@ class _PlacesViewState extends State<PlacesView> {
                                   placeImage:
                                           _placeData["place_image"].toString(),
                                     ))),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                _placeData['place_image'].toString()),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 10,
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    _placeData['place_image'].toString()),
+                              ),
+                              title: Text(_placeData["place_name"].toString()),
+                              trailing: const Text('[ City: Delhi ]'),
+                            ),
                           ),
-                          title: Text(_placeData["place_name"].toString()),
                         ),
                       );
                     });
