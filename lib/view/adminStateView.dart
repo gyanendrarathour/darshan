@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -61,6 +60,68 @@ class _AdminStateViewState extends State<AdminStateView> {
         });
   }
 
+  Future<void> _updateState(DocumentSnapshot stateData) async {
+    stateController.text = stateData['state_name'];
+    bool isSwitch = stateData['status'];
+
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: stateController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Enter State Name"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Switch(
+                      value: isSwitch,
+                      onChanged: (value) {
+                        setState(() {
+                          isSwitch = !isSwitch;
+                        });
+                      }),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          // bool status = true;
+                          await _collectionReference.doc(stateData.id).update({
+                            'state_name': stateController.text,
+                            'status': isSwitch
+                          });
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  'State name has been updated successfully...')));
+                        },
+                        child: const Text(
+                          'Update',
+                          style: TextStyle(fontSize: 20),
+                        )),
+                  )
+                ],
+              ),
+            );
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +153,9 @@ class _AdminStateViewState extends State<AdminStateView> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await _updateState(_documentReference);
+                                  },
                                   icon: const Icon(Icons.edit)),
                               IconButton(
                                   onPressed: () {},
