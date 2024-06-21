@@ -32,7 +32,7 @@ class _HomeviewState extends State<Homeview> {
           ],
         ),
         body: StreamBuilder(
-            stream: _states.snapshots(),
+            stream: _states.where('status', isEqualTo: true).snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return GridView.builder(
@@ -57,16 +57,18 @@ class _HomeviewState extends State<Homeview> {
                                       )));
                         },
                         child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.blue),
+                          padding: const EdgeInsets.all(20.0),
+                          child: Card(
+                            elevation: 10,
                             child: Center(
+                                child: Expanded(
+                              child: Center(
                                 child: Text(
-                              _stateData["state_name"].toString(),
-                              style: const TextStyle(
-                                  fontSize: 25, color: Colors.white),
+                                  _stateData["state_name"].toString(),
+                                  style: const TextStyle(
+                                      fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             )),
                           ),
                         ),

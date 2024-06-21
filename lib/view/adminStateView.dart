@@ -60,6 +60,42 @@ class _AdminStateViewState extends State<AdminStateView> {
         });
   }
 
+  Future<void> _deleteState(DocumentSnapshot stateData) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Alert !!!'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text('Are you sure to delete the state?')],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await _collectionReference.doc(stateData.id).delete();
+                stateController.text = "";
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content:
+                        Text('Selected State has been deleted successfully.')));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _updateState(DocumentSnapshot stateData) async {
     stateController.text = stateData['state_name'];
     bool isSwitch = stateData['status'];
@@ -105,6 +141,7 @@ class _AdminStateViewState extends State<AdminStateView> {
                             'state_name': stateController.text,
                             'status': isSwitch
                           });
+                          stateController.text = "";
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                               content: Text(
@@ -158,7 +195,9 @@ class _AdminStateViewState extends State<AdminStateView> {
                                   },
                                   icon: const Icon(Icons.edit)),
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await _deleteState(_documentReference);
+                                  },
                                   icon: const Icon(Icons.delete)),
                               IconButton(
                                   onPressed: () {},
