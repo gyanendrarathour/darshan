@@ -78,6 +78,9 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                           'place_image': imgUrl,
                           'status': status
                         });
+                        placeController.text = "";
+                        cityController.text = "";
+                        imgUrlController.text = "";
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -93,6 +96,45 @@ class _AdminplaceviewState extends State<Adminplaceview> {
             ),
           );
         });
+  }
+
+  Future<void> _deletePlace(DocumentSnapshot placeData) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Alert !!!'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[Text('Are you sure to delete the place?')],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await _places
+                    .doc(widget.stateId)
+                    .collection("places")
+                    .doc(placeData.id)
+                    .delete();
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content:
+                        Text('Selected Place has been deleted successfully.')));
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _updatePlace(DocumentSnapshot placeData) async {
@@ -167,7 +209,6 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                             "place_image": imgUrlController.text,
                             "status": isSwitch
                           });
-                          // placeController.text = "";
                           placeController.text = "";
                           cityController.text = "";
                           imgUrlController.text = "";
@@ -238,7 +279,9 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                                       },
                                       icon: const Icon(Icons.edit)),
                                   IconButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        await _deletePlace(_placeData);
+                                      },
                                       icon: const Icon(Icons.delete))
                                 ],
                               ),
