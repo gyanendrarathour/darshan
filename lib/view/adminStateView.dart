@@ -18,12 +18,14 @@ class _AdminStateViewState extends State<AdminStateView> {
 
   Future<void> _addState() async {
     await showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
         context: context,
         builder: (context) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 TextField(
                   controller: stateController,
@@ -102,6 +104,8 @@ class _AdminStateViewState extends State<AdminStateView> {
     bool isSwitch = stateData['status'];
 
     await showModalBottomSheet(
+      isScrollControlled: true,
+      useSafeArea: true,
         context: context,
         builder: (context) {
           return StatefulBuilder(
@@ -109,7 +113,7 @@ class _AdminStateViewState extends State<AdminStateView> {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   TextField(
                     controller: stateController,
@@ -162,90 +166,92 @@ class _AdminStateViewState extends State<AdminStateView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('States'),
-        centerTitle: true,
-      ),
-      body: StreamBuilder(
-          stream: _collectionReference.snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    final DocumentSnapshot _documentReference =
-                        snapshot.data!.docs[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          String stateName = _documentReference['state_name'];
-                          String stateId = _documentReference.id;
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Adminplaceview(
-                                      stateId: stateId, stateName: stateName)));
-                        },
-                        child: Card(
-                          elevation: 10,
-                          child: ListTile(
-                            leading: Text(
-                              "${index + 1}",
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            title: Text(
-                              _documentReference['state_name'],
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            subtitle: _documentReference['status']
-                                ? const Text(
-                                    'Active',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green),
-                                  )
-                                : const Text(
-                                    'Inactive',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red),
-                                  ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                    onPressed: () async {
-                                      await _updateState(_documentReference);
-                                    },
-                                    icon: const Icon(Icons.edit)),
-                                IconButton(
-                                    onPressed: () async {
-                                      await _deleteState(_documentReference);
-                                    },
-                                    icon: const Icon(Icons.delete))
-                              ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('States'),
+          centerTitle: true,
+        ),
+        body: StreamBuilder(
+            stream: _collectionReference.snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot _documentReference =
+                          snapshot.data!.docs[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            String stateName = _documentReference['state_name'];
+                            String stateId = _documentReference.id;
+      
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Adminplaceview(
+                                        stateId: stateId, stateName: stateName)));
+                          },
+                          child: Card(
+                            elevation: 10,
+                            child: ListTile(
+                              leading: Text(
+                                "${index + 1}",
+                                style:
+                                    const TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              title: Text(
+                                _documentReference['state_name'],
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                              subtitle: _documentReference['status']
+                                  ? const Text(
+                                      'Active',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green),
+                                    )
+                                  : const Text(
+                                      'Inactive',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red),
+                                    ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                      onPressed: () async {
+                                        await _updateState(_documentReference);
+                                      },
+                                      icon: const Icon(Icons.edit)),
+                                  IconButton(
+                                      onPressed: () async {
+                                        await _deleteState(_documentReference);
+                                      },
+                                      icon: const Icon(Icons.delete))
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  });
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _addState();
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
+                      );
+                    });
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _addState();
+          },
+          backgroundColor: Colors.blue,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

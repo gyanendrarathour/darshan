@@ -61,15 +61,13 @@ class _HomeviewState extends State<Homeview> {
                           child: Card(
                             elevation: 10,
                             child: Center(
-                                child: Expanded(
-                              child: Center(
-                                child: Text(
-                                  _stateData["state_name"].toString(),
-                                  style: const TextStyle(
-                                      fontSize: 15, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            )),
+                                child: Center(
+                                  child: Text(
+                                    _stateData["state_name"].toString(),
+                                    style: const TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.bold),
+                                  ),
+                                )),
                           ),
                         ),
                       );

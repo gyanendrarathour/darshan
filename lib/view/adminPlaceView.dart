@@ -22,6 +22,8 @@ class _AdminplaceviewState extends State<Adminplaceview> {
 
   Future<void> _addPlace() async {
     await showModalBottomSheet(
+        // isScrollControlled: true,
+        // useSafeArea: true,
         context: context,
         builder: (context) {
           return Padding(
@@ -67,16 +69,20 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                         String cityName = cityController.text;
                         String imgUrl = imgUrlController.text;
                         bool status = false;
-                        await _places.doc(widget.stateId).collection("places").add({
+                        await _places
+                            .doc(widget.stateId)
+                            .collection("places")
+                            .add({
                           'place_name': placeName,
                           'city_name': cityName,
                           'place_image': imgUrl,
                           'status': status
                         });
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text(
-                                'Place has been added successfully...')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Place has been added successfully...')));
                       },
                       child: const Text(
                         'Add',
@@ -86,6 +92,99 @@ class _AdminplaceviewState extends State<Adminplaceview> {
               ],
             ),
           );
+        });
+  }
+
+  Future<void> _updatePlace(DocumentSnapshot placeData) async {
+    placeController.text = placeData['place_name'];
+    cityController.text = placeData['city_name'];
+    imgUrlController.text = placeData['place_image'];
+    bool isSwitch = placeData['status'];
+
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        useSafeArea: true,
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  TextField(
+                    controller: placeController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Enter Place Name"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                    controller: cityController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Enter City Name"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextField(
+                    controller: imgUrlController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Enter Image Url"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Switch(
+                      value: isSwitch,
+                      onChanged: (value) {
+                        setState(() {
+                          isSwitch = !isSwitch;
+                        });
+                      }),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          await _places
+                              .doc(widget.stateId)
+                              .collection("places")
+                              .doc(placeData.id)
+                              .update({
+                            "place_name": placeController.text,
+                            "city_name": cityController.text,
+                            "place_image": imgUrlController.text,
+                            "status": isSwitch
+                          });
+                          // placeController.text = "";
+                          placeController.text = "";
+                          cityController.text = "";
+                          imgUrlController.text = "";
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text(
+                                  'State name has been updated successfully...')));
+                        },
+                        child: const Text(
+                          'Update',
+                          style: TextStyle(fontSize: 20),
+                        )),
+                  )
+                ],
+              ),
+            );
+          });
         });
   }
 
@@ -134,7 +233,9 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        await _updatePlace(_placeData);
+                                      },
                                       icon: const Icon(Icons.edit)),
                                   IconButton(
                                       onPressed: () {},
@@ -153,7 +254,9 @@ class _AdminplaceviewState extends State<Adminplaceview> {
               }
             }),
         floatingActionButton: FloatingActionButton(
-          onPressed: () async{ await _addPlace();},
+          onPressed: () async {
+            await _addPlace();
+          },
           backgroundColor: Colors.blue,
           child: const Icon(Icons.add),
         ),
