@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darshan/view/aboutPlaceView.dart';
+import 'package:darshan/view/adminAboutPlaceView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -22,8 +23,8 @@ class _AdminplaceviewState extends State<Adminplaceview> {
 
   Future<void> _addPlace() async {
     await showModalBottomSheet(
-        // isScrollControlled: true,
-        // useSafeArea: true,
+        isScrollControlled: true,
+        useSafeArea: true,
         context: context,
         builder: (context) {
           return Padding(
@@ -250,7 +251,7 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (contaxt) => AboutPlaceView(
+                                builder: (contaxt) => Adminaboutplaceview(
                                       stateId: widget.stateId,
                                       placeId: _placeData.id.toString(),
                                       placeName:

@@ -25,6 +25,7 @@ class _PlacesViewState extends State<PlacesView> {
           centerTitle: true,
         ),
         body: StreamBuilder(
+            // stream: _places.doc(widget.stateId).collection('places').where('status', isEqualTo: true).snapshots(),
             stream: _places.doc(widget.stateId).collection('places').snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
