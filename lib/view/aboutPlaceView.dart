@@ -42,12 +42,9 @@ class _AboutPlaceViewState extends State<AboutPlaceView> {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
                       DocumentSnapshot _placeData = snapshot.data!.docs[index];
-                      return GestureDetector(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
+                      return Column(
+                            children: [
+                              Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all()),
@@ -58,16 +55,101 @@ class _AboutPlaceViewState extends State<AboutPlaceView> {
                                           widget.placeImage.toString())),
                                 ),
                               ),
-                            ),
-                            ListTile(
-                              title: Text(_placeData["stations"].toString()),
-                            ),
-                            ListTile(
-                              title: Text(_placeData["about"].toString()),
-                            ),
-                          ],
-                        ),
-                      );
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 35,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 8, 93, 241))),
+                                      child: const Center(
+                                          child: Text(
+                                        'TIMINGS',
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                                      )),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 10),
+                                      child: ListTile(
+                                        title:
+                                            Text(_placeData["inCity"].toString()),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 35,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 8, 93, 241))),
+                                      child: const Center(
+                                          child: Text(
+                                        'PUBLIC FACILITIES',
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                                      )),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 10),
+                                      child: ListTile(
+                                        title:
+                                            Text(_placeData["inCity"].toString()),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Card(
+                                elevation: 10,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 35,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 8, 93, 241))),
+                                      child: const Center(
+                                          child: Text(
+                                        'ABOUT THE PLACE',
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                                      )),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(vertical: 10),
+                                      child: ListTile(
+                                        title:
+                                            Text(_placeData["aboutPlace"].toString()),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
                     });
               } else {
                 return const Center(

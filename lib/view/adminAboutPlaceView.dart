@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Adminaboutplaceview extends StatefulWidget {
-   String placeName;
+  String placeName;
   String placeId;
   String? placeImage;
   String stateId;
-  Adminaboutplaceview({super.key,
+  Adminaboutplaceview(
+      {super.key,
       required this.placeId,
       required this.placeName,
       this.placeImage,
@@ -19,8 +20,10 @@ class Adminaboutplaceview extends StatefulWidget {
 class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
   final CollectionReference _collectionReference =
       FirebaseFirestore.instance.collection('states');
-  TextEditingController inCityController = TextEditingController();
+  TextEditingController timingsController = TextEditingController();
+  TextEditingController publicFacilitiesController = TextEditingController();
   TextEditingController aboutPlaceController = TextEditingController();
+  bool isContent = false;
 
   Future<void> _addDetails() async {
     await showModalBottomSheet(
@@ -33,16 +36,28 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                TextField(
-                  controller: inCityController,
+                TextFormField(
+                  controller: timingsController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      hintText: "What is in this city"),
+                      hintText: "Enter the timings of this place"),
+                  maxLines: 5,
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                TextField(
+                TextFormField(
+                  controller: publicFacilitiesController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText:
+                          "Enter the facilites of this place like bus, train, flight, hotels..."),
+                  maxLines: 5,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
                   controller: aboutPlaceController,
                   decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -59,22 +74,27 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                       BoxDecoration(borderRadius: BorderRadius.circular(10)),
                   child: ElevatedButton(
                       onPressed: () async {
-                        String inCity = inCityController.text;
+                        String timings = timingsController.text;
+                        String publicFacilities =
+                            publicFacilitiesController.text;
                         String aboutPlace = aboutPlaceController.text;
                         await _collectionReference
                             .doc(widget.stateId)
-                            .collection("places").doc(widget.placeId).collection('about_place')
+                            .collection("places")
+                            .doc(widget.placeId)
+                            .collection('about_place')
                             .add({
-                          'inCity': inCity,
+                          'timings': timings,
+                          'publicFacilities': publicFacilities,
                           'aboutPlace': aboutPlace
                         });
-                        inCityController.text = "";
+                        timingsController.text = "";
+                        publicFacilitiesController.text = "";
                         aboutPlaceController.text = "";
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text(
-                                    'About the Place has been added successfully...')));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text(
+                                'About the Place has been added successfully...')));
                       },
                       child: const Text(
                         'Add',
@@ -95,56 +115,157 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
           title: Text("About ${widget.placeName}"),
           centerTitle: true,
         ),
-        body: StreamBuilder(
-            stream: _collectionReference
-                .doc(widget.stateId)
-                .collection('places')
-                .doc(widget.placeId)
-                .collection('about_place')
-                .snapshots(),
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      DocumentSnapshot _placeData = snapshot.data!.docs[index];
-                      return GestureDetector(
-                        child: Column(
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: StreamBuilder(
+              stream: _collectionReference
+                  .doc(widget.stateId)
+                  .collection('places')
+                  .doc(widget.placeId)
+                  .collection('about_place')
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        DocumentSnapshot _placeData =
+                            snapshot.data!.docs[index];
+                        return Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all()),
-                                child: Card(
-                                  elevation: 10,
-                                  child: Image(
-                                      image: NetworkImage(
-                                          widget.placeImage.toString())),
-                                ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all()),
+                              child: Card(
+                                elevation: 10,
+                                child: Image(
+                                    image: NetworkImage(
+                                        widget.placeImage.toString())),
                               ),
                             ),
-                            ListTile(
-                              title: Text(_placeData["inCity"].toString()),
+                            const SizedBox(
+                              height: 10,
                             ),
-                            ListTile(
-                              title: Text(_placeData["aboutPlace"].toString()),
+                            Card(
+                              elevation: 10,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 35,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 8, 93, 241))),
+                                    child: const Center(
+                                        child: Text(
+                                      'TIMINGS',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    )),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: ListTile(
+                                      title: Text(
+                                          _placeData["timings"].toString()),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Card(
+                              elevation: 10,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 35,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 8, 93, 241))),
+                                    child: const Center(
+                                        child: Text(
+                                      'PUBLIC FACILITIES',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    )),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: ListTile(
+                                      title: Text(
+                                          _placeData["publicFacilities"].toString()),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Card(
+                              elevation: 10,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 35,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.blue,
+                                        border: Border.all(
+                                            color: const Color.fromARGB(
+                                                255, 8, 93, 241))),
+                                    child: const Center(
+                                        child: Text(
+                                      'ABOUT THE PLACE',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    )),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: ListTile(
+                                      title: Text(
+                                          _placeData["aboutPlace"].toString()),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
-                        ),
-                      );
-                    });
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }),
-            floatingActionButton: FloatingActionButton(onPressed: () async{
-              await _addDetails();
-            },
-            child: Icon(Icons.add), backgroundColor: Colors.blue,),
+                        );
+                      });
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              }),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            await _addDetails();
+          },
+          child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
+        ),
       ),
     );
   }
