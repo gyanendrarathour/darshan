@@ -26,7 +26,7 @@ class _PlacesViewState extends State<PlacesView> {
         ),
         body: StreamBuilder(
             // stream: _places.doc(widget.stateId).collection('places').where('status', isEqualTo: true).snapshots(),
-            stream: _places.doc(widget.stateId).collection('places').snapshots(),
+            stream: _places.doc(widget.stateId).collection('places').where('status', isEqualTo: true).snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -55,7 +55,7 @@ class _PlacesViewState extends State<PlacesView> {
                                     _placeData['place_image'].toString()),
                               ),
                               title: Text(_placeData["place_name"].toString()),
-                              trailing: const Text('[ City: Delhi ]'),
+                              trailing: Text(_placeData['city_name'].toString().toUpperCase()),
                             ),
                           ),
                         ),

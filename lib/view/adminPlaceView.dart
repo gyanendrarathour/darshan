@@ -269,8 +269,17 @@ class _AdminplaceviewState extends State<Adminplaceview> {
                                     _placeData['place_image'].toString()),
                               ),
                               title: Text(
-                                  "${_placeData["place_name"].toString()} [ City ]"),
-                              subtitle: const Text('Status'),
+                                  "${_placeData["place_name"].toString()} [ ${_placeData["city_name"].toString()} ]"),
+                              subtitle: _placeData["status"]
+                                  ? const Text(
+                                      'Active',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green),
+                                    )
+                                  : const Text('Inactive', style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red)),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
