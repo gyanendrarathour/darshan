@@ -18,11 +18,17 @@ class Adminaboutplaceview extends StatefulWidget {
 }
 
 class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
+  String? placeName;
+  String? placeId;
+  String? placeImage;
+  String? stateId;
+
   final CollectionReference _collectionReference =
       FirebaseFirestore.instance.collection('states');
   TextEditingController timingsController = TextEditingController();
   TextEditingController publicFacilitiesController = TextEditingController();
   TextEditingController aboutPlaceController = TextEditingController();
+  int docCount = 0;
   bool isContent = false;
 
   Future<void> _addDetails() async {
@@ -107,12 +113,33 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
         });
   }
 
+  void func()async{
+  var ref = await _collectionReference
+                  .doc(widget.stateId)
+                  .collection('places')
+                  .doc(widget.placeId)
+                  .collection('about_place').get();
+    if (ref.size>0){
+      isContent = true;
+      setState(() {
+        
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    func();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("About ${widget.placeName}"),
+          title: Text("About ${widget.placeName} & ${docCount}"),
           centerTitle: true,
         ),
         body: Padding(
@@ -126,8 +153,9 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
+                    docCount = snapshot.data!.docs.length;
                   return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      itemCount: docCount,
                       itemBuilder: (context, index) {
                         DocumentSnapshot _placeData =
                             snapshot.data!.docs[index];
@@ -246,6 +274,11 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                                           _placeData["aboutPlace"].toString()),
                                     ),
                                   ),
+                                  ElevatedButton(onPressed: (){
+                                    setState(() {
+                                      
+                                    });
+                                  }, child: Text('Add/Edit'))
                                 ],
                               ),
                             ),
@@ -253,17 +286,30 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                         );
                       });
                 } else {
+                  // isContent=false;
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
               }),
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: isContent==false? FloatingActionButton(
           onPressed: () async {
             await _addDetails();
+            setState(() {
+              
+            });
           },
           child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
+        ): FloatingActionButton(
+          onPressed: () async {
+            await _addDetails();
+            setState(() {
+              
+            });
+          },
+          child: Icon(Icons.edit),
           backgroundColor: Colors.blue,
         ),
       ),
