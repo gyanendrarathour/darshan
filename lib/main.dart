@@ -1,4 +1,3 @@
-import 'package:darshan/view/homeView.dart';
 import 'package:darshan/view/splashView.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
