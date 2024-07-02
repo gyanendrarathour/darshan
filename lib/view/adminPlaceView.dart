@@ -30,7 +30,7 @@ class _AdminplaceviewState extends State<Adminplaceview> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 TextField(
                   controller: placeController,

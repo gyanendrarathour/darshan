@@ -113,17 +113,103 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
         });
   }
 
-  void func()async{
-  var ref = await _collectionReference
-                  .doc(widget.stateId)
-                  .collection('places')
-                  .doc(widget.placeId)
-                  .collection('about_place').get();
-    if (ref.size>0){
+  Future<void> _updateDetails(DocumentSnapshot aboutDetails) async {
+    timingsController.text = aboutDetails['timings'];
+    publicFacilitiesController.text = aboutDetails['publicFacilities'];
+    aboutPlaceController.text = aboutDetails['aboutPlace'];
+
+    await showModalBottomSheet(
+        isScrollControlled: true,
+        useSafeArea: true,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                TextFormField(
+                  controller: timingsController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Enter the timings of this place"),
+                  maxLines: 5,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: publicFacilitiesController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText:
+                          "Enter the facilites of this place like bus, train, flight, hotels..."),
+                  maxLines: 5,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: aboutPlaceController,
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Enter about the place"),
+                  maxLines: 5,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        String timings = timingsController.text;
+                        String publicFacilities =
+                            publicFacilitiesController.text;
+                        String aboutPlace = aboutPlaceController.text;
+                        await _collectionReference
+                            .doc(widget.stateId)
+                            .collection("places")
+                            .doc(widget.placeId)
+                            .collection('about_place')
+                            .doc(aboutDetails.id)
+                            .update({
+                          'timings': timings,
+                          'publicFacilities': publicFacilities,
+                          'aboutPlace': aboutPlace
+                        });
+                        timingsController.text = "";
+                        publicFacilitiesController.text = "";
+                        aboutPlaceController.text = "";
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text(
+                                'About the Place has been Updated successfully...')));
+                      },
+                      child: const Text(
+                        'Update',
+                        style: TextStyle(fontSize: 20),
+                      )),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  void func() async {
+    var ref = await _collectionReference
+        .doc(widget.stateId)
+        .collection('places')
+        .doc(widget.placeId)
+        .collection('about_place')
+        .get();
+    if (ref.size > 0) {
       isContent = true;
-      setState(() {
-        
-      });
+      setState(() {});
     }
   }
 
@@ -139,7 +225,7 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("About ${widget.placeName} & ${docCount}"),
+          title: Text("About ${widget.placeName}"),
           centerTitle: true,
         ),
         body: Padding(
@@ -153,7 +239,7 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
-                    docCount = snapshot.data!.docs.length;
+                  docCount = snapshot.data!.docs.length;
                   return ListView.builder(
                       itemCount: docCount,
                       itemBuilder: (context, index) {
@@ -235,8 +321,8 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 10),
                                     child: ListTile(
-                                      title: Text(
-                                          _placeData["publicFacilities"].toString()),
+                                      title: Text(_placeData["publicFacilities"]
+                                          .toString()),
                                     ),
                                   ),
                                 ],
@@ -274,14 +360,26 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                                           _placeData["aboutPlace"].toString()),
                                     ),
                                   ),
-                                  ElevatedButton(onPressed: (){
-                                    setState(() {
-                                      
-                                    });
-                                  }, child: Text('Add/Edit'))
                                 ],
                               ),
                             ),
+                            
+                                  const SizedBox(height: 10,),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: ElevatedButton(
+                                        onPressed: () async {
+                                          await _updateDetails(_placeData);
+                                        },
+                                        child: const Text(
+                                          'Edit',
+                                          style: TextStyle(fontSize: 20),
+                                        )),
+                                  )
                           ],
                         );
                       });
@@ -293,25 +391,16 @@ class _AdminaboutplaceviewState extends State<Adminaboutplaceview> {
                 }
               }),
         ),
-        floatingActionButton: isContent==false? FloatingActionButton(
-          onPressed: () async {
-            await _addDetails();
-            setState(() {
-              
-            });
-          },
-          child: Icon(Icons.add),
-          backgroundColor: Colors.blue,
-        ): FloatingActionButton(
-          onPressed: () async {
-            await _addDetails();
-            setState(() {
-              
-            });
-          },
-          child: Icon(Icons.edit),
-          backgroundColor: Colors.blue,
-        ),
+        floatingActionButton: isContent == false
+            ? FloatingActionButton(
+                onPressed: () async {
+                  await _addDetails();
+                  setState(() {});
+                },
+                child: Icon(Icons.add),
+                backgroundColor: Colors.blue,
+              )
+            : const SizedBox(),
       ),
     );
   }
